@@ -1,8 +1,11 @@
-const Bookmark = require('../../models/bookmark')
 require('dotenv').config()
+const Bookmark = require('../../models/bookmark')
 const User = require('../../models/user')
 
 // delete bookmark
+// create bookmark
+// update bookmark
+
 const destroyBookmark = async (req, res, next) => {
   try {
     const deletedBookmark = await Bookmark.findByIdAndDelete(req.params.id)
@@ -13,7 +16,6 @@ const destroyBookmark = async (req, res, next) => {
   }
 }
 
-// update bookmark
 const updateBookmark = async (req, res, next) => {
   try {
     const updatedBookmark = await Bookmark.findByIdAndUpdate(req.params.id, req.body, { new: true })
@@ -24,7 +26,6 @@ const updateBookmark = async (req, res, next) => {
   }
 }
 
-// create bookmark
 const createBookmark = async (req, res, next) => {
   try {
     const createdBookmark = await Bookmark.create(req.body)

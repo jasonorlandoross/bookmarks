@@ -1,8 +1,8 @@
-const { Schema, model } = require('mogoose')
+const { Schema, model } = require('mongoose')
 
 const bookmarkSchema = new Schema({
-  title: { type: String, require: true },
-  url: { type: String, require: true }
+  title: { type: String, required: true },
+  url: { type: String, required: true }
 }, {
   timestamps: true
 })

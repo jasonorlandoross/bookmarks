@@ -16,13 +16,13 @@ const signUp = async (req, res, next) => {
   }
 }
 
-const logIn = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email })
-    if (!user) throw Error('user not found, email was invalid')
-    const password = crypto.createHmac('sha256', process.env.SECRET).update(req.body.password).split('').reverse().join('')
+    if (!user) throw new Error('user not found, email was invalid')
+    const password = crypto.createHmac('sha256', process.env.SECRET).update(req.body.password).digest('hex').split('').reverse().join('')
     const match = await bcrypt.compare(password, user.password)
-    if (!match) throw new Error('password did not match')
+    if (!match) throw new Error('Password did not match')
     res.locals.data.user = user
     res.locals.data.token = createJWT(user)
     next()
@@ -33,7 +33,7 @@ const logIn = async (req, res, next) => {
 
 const getBookmarksByUser = async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.locals.data.email }).populate('bookmarks').sort('bookmarks.createdAt').exec()
+    const user = await User.findOne({ email: res.locals.data.email }).populate('bookmarks').sort('bookmarks.createdAt').exec()
     const bookmarks = user.bookmarks
     res.locals.data.bookmarks = bookmarks
     next()
@@ -56,15 +56,14 @@ const respondWithBookmarks = (req, res) => {
 
 module.exports = {
   signUp,
-  logIn,
+  login,
   getBookmarksByUser,
-  respondWithBookmarks,
   respondWithToken,
+  respondWithBookmarks,
   respondWithUser
 }
 
-// helper function
-
+/* Helper Function */
 function createJWT (user) {
   return jwt.sign({ user }, process.env.SECRET, { expiresIn: '48h' })
 }
